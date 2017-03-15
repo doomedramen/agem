@@ -27,8 +27,8 @@ export default class extends Phaser.State {
         //
         // });
 
-        // this.gems = new Phaser.Group(this.game);
-        this.gems = this.game.add.physicsGroup(Phaser.Physics.P2JS);
+        this.gems = new Phaser.Group(this.game);
+        // this.gems = this.game.add.physicsGroup(Phaser.Physics.P2JS);
         // console.log(this.gems.events);
         // this.gems.events.onOutOfBounds.add(gem => {
         //     console.log('killed gem');
@@ -41,15 +41,15 @@ export default class extends Phaser.State {
         Platform.Preload(this);
         Gem.Preload(this);
 
-        this.game.load.physics('physicsData', 'assets/physics/platform.json');
+        // this.game.load.physics('physicsData', 'assets/physics/platform.json');
 
     }
 
     create() {
         const self = this;
 
-        this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.gravity.y = 0;
+        // this.game.physics.startSystem(Phaser.Physics.P2JS);
+        // this.game.physics.p2.gravity.y = 0;
         // this.game.physics.p2.restitution = 1.0;
 
         //SCORE
@@ -65,12 +65,10 @@ export default class extends Phaser.State {
         //PLATFORM
         this.platform = new Platform({game: this});
         this.game.add.existing(this.platform);
-        this.game.physics.p2.enable(this.platform, true);
-        this.platform.body.clearShapes();
-        this.platform.body.loadPolygon('physicsData', 'platform');
-        this.platform.body.static = true;
-        // this.platform.body.setZeroDamping();
-        // this.platform.body.fixedRotation = true;
+        // this.game.physics.p2.enable(this.platform, true);
+        // this.platform.body.clearShapes();
+        // this.platform.body.loadPolygon('physicsData', 'platform');
+        // this.platform.body.static = true;
 
         //DROP TIMER
         this.dropTimer = this.game.time.create(false);
@@ -84,9 +82,9 @@ export default class extends Phaser.State {
             // this.game.physics.p2.enable(gem);
             self.gems.add(gem, true);
             gem.angle = 45;
-            gem.body.angle = 45;
-            gem.body.collideWorldBounds = false;
-            gem.body.fixedRotation = true;
+            // gem.body.angle = 45;
+            // gem.body.collideWorldBounds = false;
+            // gem.body.fixedRotation = true;
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);
         };
         dropGem();
@@ -102,8 +100,9 @@ export default class extends Phaser.State {
 
         //UPDATE GEM POSITIONS
         this.gems.forEachAlive(gem => {
+            // gem.body.setZeroVelocity();
             gem.position.y += this.fallSpeed;
-            gem.body.y += this.fallSpeed;
+            // gem.body.y += this.fallSpeed;
 
             if (gem.position.y > this.game.height + gem.height) {
                 gem.destroy();
@@ -112,9 +111,9 @@ export default class extends Phaser.State {
         });
 
 
-        this.platform.body.setZeroVelocity();
-        // this.platform.x = this.game.input.x;
-        this.platform.body.x = this.game.input.x;
+        // this.platform.body.setZeroVelocity();
+        this.platform.x = this.game.input.x;
+        // this.platform.body.x = this.game.input.x;
 
     }
 
