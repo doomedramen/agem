@@ -41,13 +41,15 @@ export default class extends Phaser.State {
         Platform.Preload(this);
         Gem.Preload(this);
 
+        this.game.load.physics('physicsData', 'assets/physics/platform.json');
+
     }
 
     create() {
         const self = this;
 
         this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.gravity.y = 100;
+        this.game.physics.p2.gravity.y = 0;
         // this.game.physics.p2.restitution = 1.0;
 
         //SCORE
@@ -64,6 +66,8 @@ export default class extends Phaser.State {
         this.platform = new Platform({game: this});
         this.game.add.existing(this.platform);
         this.game.physics.p2.enable(this.platform, true);
+        this.platform.body.clearShapes();
+        this.platform.body.loadPolygon('physicsData', 'platform');
         this.platform.body.static = true;
         // this.platform.body.setZeroDamping();
         // this.platform.body.fixedRotation = true;
@@ -81,7 +85,7 @@ export default class extends Phaser.State {
             self.gems.add(gem, true);
             gem.angle = 45;
             gem.body.angle = 45;
-            // gem.body.collideWorldBounds = false;
+            gem.body.collideWorldBounds = false;
             gem.body.fixedRotation = true;
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);
         };
@@ -97,15 +101,15 @@ export default class extends Phaser.State {
 
 
         //UPDATE GEM POSITIONS
-        // this.gems.forEachAlive(gem => {
-        //     gem.position.y += this.fallSpeed;
-        //     // gem.body.position.y += this.fallSpeed;
-        //
-        //     if(gem.position.y > this.game.height + gem.height){
-        //         gem.destroy();
-        //     }
-        //
-        // });
+        this.gems.forEachAlive(gem => {
+            gem.position.y += this.fallSpeed;
+            gem.body.y += this.fallSpeed;
+
+            if (gem.position.y > this.game.height + gem.height) {
+                gem.destroy();
+            }
+
+        });
 
 
         this.platform.body.setZeroVelocity();

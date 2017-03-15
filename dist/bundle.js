@@ -4030,10 +4030,10 @@ var _class = function (_Phaser$Sprite) {
 
         _classCallCheck(this, _class);
 
-        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 50, 'platform'));
+        // const scale = game.scale.width / this.width;
+        // this.scale.set(scale/3);
 
-        var scale = game.scale.width / _this.width;
-        _this.scale.set(scale / 3);
+        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 50, 'platform'));
 
         _this.anchor.setTo(0.5);
         return _this;
@@ -4221,6 +4221,8 @@ var _class = function (_Phaser$State) {
 
             _Platform2.default.Preload(this);
             _Gem2.default.Preload(this);
+
+            this.game.load.physics('physicsData', 'assets/physics/platform.json');
         }
     }, {
         key: 'create',
@@ -4228,7 +4230,7 @@ var _class = function (_Phaser$State) {
             var self = this;
 
             this.game.physics.startSystem(_phaser2.default.Physics.P2JS);
-            this.game.physics.p2.gravity.y = 100;
+            this.game.physics.p2.gravity.y = 0;
             // this.game.physics.p2.restitution = 1.0;
 
             //SCORE
@@ -4245,6 +4247,8 @@ var _class = function (_Phaser$State) {
             this.platform = new _Platform2.default({ game: this });
             this.game.add.existing(this.platform);
             this.game.physics.p2.enable(this.platform, true);
+            this.platform.body.clearShapes();
+            this.platform.body.loadPolygon('physicsData', 'platform');
             this.platform.body.static = true;
             // this.platform.body.setZeroDamping();
             // this.platform.body.fixedRotation = true;
@@ -4262,7 +4266,7 @@ var _class = function (_Phaser$State) {
                 self.gems.add(gem, true);
                 gem.angle = 45;
                 gem.body.angle = 45;
-                // gem.body.collideWorldBounds = false;
+                gem.body.collideWorldBounds = false;
                 gem.body.fixedRotation = true;
                 self.dropTimer.add(_phaser2.default.Timer.SECOND * self.timeBetweenGems, dropGem, self);
             };
@@ -4271,22 +4275,21 @@ var _class = function (_Phaser$State) {
     }, {
         key: 'update',
         value: function update() {
+            var _this2 = this;
 
             //UPDATE SPEEDS
             this.fallSpeed += 0.0001;
             this.timeBetweenGems -= 0.0001;
 
             //UPDATE GEM POSITIONS
-            // this.gems.forEachAlive(gem => {
-            //     gem.position.y += this.fallSpeed;
-            //     // gem.body.position.y += this.fallSpeed;
-            //
-            //     if(gem.position.y > this.game.height + gem.height){
-            //         gem.destroy();
-            //     }
-            //
-            // });
+            this.gems.forEachAlive(function (gem) {
+                gem.position.y += _this2.fallSpeed;
+                gem.body.y += _this2.fallSpeed;
 
+                if (gem.position.y > _this2.game.height + gem.height) {
+                    gem.destroy();
+                }
+            });
 
             this.platform.body.setZeroVelocity();
             // this.platform.x = this.game.input.x;
