@@ -3963,7 +3963,7 @@ var _class = function (_Phaser$Sprite) {
 
         _classCallCheck(this, _class);
 
-        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, 30, 'gem'));
+        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, 100, 'gem'));
 
         var gemSize = game.scale.width / 20;
         _this.width = gemSize;
@@ -4207,7 +4207,13 @@ var _class = function (_Phaser$State) {
             //
             // });
 
-            this.gems = new _phaser2.default.Group(this.game);
+            // this.gems = new Phaser.Group(this.game);
+            this.gems = this.game.add.physicsGroup(_phaser2.default.Physics.P2JS);
+            // console.log(this.gems.events);
+            // this.gems.events.onOutOfBounds.add(gem => {
+            //     console.log('killed gem');
+            //     gem.kill()
+            // }, this);
         }
     }, {
         key: 'preload',
@@ -4220,6 +4226,10 @@ var _class = function (_Phaser$State) {
         key: 'create',
         value: function create() {
             var self = this;
+
+            this.game.physics.startSystem(_phaser2.default.Physics.P2JS);
+            this.game.physics.p2.gravity.y = 100;
+            // this.game.physics.p2.restitution = 1.0;
 
             //SCORE
             var scoreText = '' + this.score;
@@ -4234,13 +4244,26 @@ var _class = function (_Phaser$State) {
             //PLATFORM
             this.platform = new _Platform2.default({ game: this });
             this.game.add.existing(this.platform);
+            this.game.physics.p2.enable(this.platform, true);
+            this.platform.body.static = true;
+            // this.platform.body.setZeroDamping();
+            // this.platform.body.fixedRotation = true;
 
             //DROP TIMER
             this.dropTimer = this.game.time.create(false);
             this.dropTimer.start();
             var dropGem = function dropGem() {
                 var randomX = (0, _utils.randomNumber)(0, self.game.width);
-                self.gems.add(new _Gem2.default({ game: self, x: randomX }));
+
+                var gem = new _Gem2.default({ game: self, x: randomX });
+                // gem.checkWorldBounds = true;
+                // gem.events.onOutOfBounds.add(this.kill);
+                // this.game.physics.p2.enable(gem);
+                self.gems.add(gem, true);
+                gem.angle = 45;
+                gem.body.angle = 45;
+                // gem.body.collideWorldBounds = false;
+                gem.body.fixedRotation = true;
                 self.dropTimer.add(_phaser2.default.Timer.SECOND * self.timeBetweenGems, dropGem, self);
             };
             dropGem();
@@ -4248,31 +4271,40 @@ var _class = function (_Phaser$State) {
     }, {
         key: 'update',
         value: function update() {
-            var _this2 = this;
 
             //UPDATE SPEEDS
             this.fallSpeed += 0.0001;
             this.timeBetweenGems -= 0.0001;
 
             //UPDATE GEM POSITIONS
-            this.gems.forEachAlive(function (gem) {
-                gem.position.y += _this2.fallSpeed;
-            });
+            // this.gems.forEachAlive(gem => {
+            //     gem.position.y += this.fallSpeed;
+            //     // gem.body.position.y += this.fallSpeed;
+            //
+            //     if(gem.position.y > this.game.height + gem.height){
+            //         gem.destroy();
+            //     }
+            //
+            // });
 
-            this.platform.x = this.game.input.x;
+
+            this.platform.body.setZeroVelocity();
+            // this.platform.x = this.game.input.x;
+            this.platform.body.x = this.game.input.x;
         }
     }, {
         key: 'render',
         value: function render() {
 
             //CALL UPDATE
-            this.update();
+            // this.update();
 
             //SHOW DEBUG INFO
             if (true) {
-                this.game.debug.text('fallSpeed:' + this.fallSpeed, 32, 32);
-                this.game.debug.text('timeBetweenGems:' + this.timeBetweenGems, 32, 64);
-                this.game.debug.text('platform X:' + this.platform.x, 32, 96);
+                this.game.debug.text('gems:' + this.gems.length, 32, 32);
+                this.game.debug.text('fallSpeed:' + this.fallSpeed, 32, 64);
+                this.game.debug.text('timeBetweenGems:' + this.timeBetweenGems, 32, 96);
+                this.game.debug.text('platform X:' + this.platform.x, 32, 128);
             }
         }
     }]);
@@ -4324,34 +4356,24 @@ var _class = function (_Phaser$State) {
     }
 
     _createClass(_class, [{
-        key: 'init',
-        value: function init() {}
-    }, {
         key: 'preload',
         value: function preload() {
             this.load.image('piddy', 'assets/images/piddy.png');
-            // this.logo = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'piddy')
-            // centerGameObjects([this.logo]);
-
-            // this.loaderBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'loaderBar')
-            // centerGameObjects([this.loaderBg, this.loaderBar])
-
-            // this.load.setPreloadSprite(this.loaderBar)
-            //
-            // load your assets
-            //
-            //
         }
     }, {
         key: 'create',
         value: function create() {
+
+            this.touched = false;
+
             this.logo = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'piddy');
             (0, _utils.centerGameObjects)([this.logo]);
         }
     }, {
         key: 'update',
         value: function update() {
-            if (this.game.input.activePointer.isDown) {
+            if (!this.touched && this.game.input.activePointer.isDown) {
+                this.touched = true;
                 this.state.start('Game');
             }
         }

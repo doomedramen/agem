@@ -7,7 +7,7 @@ export default class extends Phaser.Sprite {
     }
 
     constructor({game, x}) {
-        super(game, x, 30, 'gem');
+        super(game, x, 100, 'gem');
 
 
         const gemSize = game.scale.width / 20;
