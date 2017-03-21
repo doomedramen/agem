@@ -4051,6 +4051,10 @@ var _phaser = __webpack_require__(/*! phaser */ 31);
 
 var _phaser2 = _interopRequireDefault(_phaser);
 
+var _Gem = __webpack_require__(/*! ./Gem */ 123);
+
+var _Gem2 = _interopRequireDefault(_Gem);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4076,7 +4080,7 @@ var _class = function (_Phaser$Sprite) {
 
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 50, 'platform'));
 
-        _this.gems = [];
+        _this.gems = { a: [], b: [], c: [], d: [], e: [] };
 
         var scale = game.scale.width / _this.width;
         _this.scale.set(scale / 3);
@@ -4085,15 +4089,35 @@ var _class = function (_Phaser$Sprite) {
     }
 
     _createClass(_class, [{
+        key: 'addGem',
+        value: function addGem(gem) {
+            this.gems.push(gem);
+        }
+    }, {
         key: 'update',
         value: function update() {
             // console.log('update gem');
             // this.position.x = this.position.x + 1;
+
+            this.gems.map(function (gem) {});
         }
     }]);
 
     return _class;
 }(_phaser2.default.Sprite);
+
+/*
+
+
+ -----[]
+ ----[][]
+ ---[][][]
+ --[][][][]
+ -[][][][][]
+
+
+ */
+
 
 exports.default = _class;
 
