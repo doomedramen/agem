@@ -11,7 +11,7 @@ export default class extends Phaser.Sprite {
     constructor({game}) {
         super(game, game.world.centerX, game.scale.height - 50, 'platform');
 
-        this.maxGemRowSize = 5;
+        this.maxGemRowSize = 10;
 
         this.gems = [];
 
