@@ -22,6 +22,8 @@ export default class extends Phaser.State {
 
     preload() {
 
+        this.game.load.image("background", "assets/img/background.png");
+
         Platform.Preload(this);
         Gem.Preload(this);
     }
@@ -29,13 +31,18 @@ export default class extends Phaser.State {
     create() {
         const self = this;
 
+        //background
+        // this.background = this.add.sprite(0, 0, 'background');
+        // this.background.width = this.width;
+        // this.background.height = this.height;
+
         //SCORE
         const scoreText = `${this.score}`;
         let score = this.add.text(this.world.centerX, 40, scoreText);
         // score.font = 'Bangers';
         score.padding.set(10, 16);
         score.fontSize = 40;
-        score.fill = '#77BFA3';
+        score.fill = '#CCD1D9';
         score.smoothed = false;
         score.anchor.setTo(0.5);
 

@@ -20,7 +20,6 @@ module.exports = {
         vendor: ['pixi', 'p2', 'phaser', 'webfontloader']
 
     },
-    watch: true,
     output: {
         path: path.resolve(__dirname, 'dist'),
         publicPath: './dist/',
@@ -36,17 +35,14 @@ module.exports = {
                 comments: false
             }
         }),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor'/* chunkName= */,
-            filename: 'vendor.bundle.js'/* filename= */
-        }),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */}),
     ],
     module: {
         rules: [
-            {test: /\.js$/, use: ['babel-loader'], include: path.join(__dirname, 'src')},
-            {test: /pixi\.js/, use: ['expose-loader?PIXI']},
-            {test: /phaser-split\.js$/, use: ['expose-loader?Phaser']},
-            {test: /p2\.js/, use: ['expose-loader?p2']}
+            { test: /\.js$/, use: ['babel-loader'], include: path.join(__dirname, 'src') },
+            { test: /pixi\.js/, use: ['expose-loader?PIXI'] },
+            { test: /phaser-split\.js$/, use: ['expose-loader?Phaser'] },
+            { test: /p2\.js/, use: ['expose-loader?p2'] }
         ]
     },
     node: {

@@ -3,7 +3,7 @@ import {centerGameObjects} from '../utils'
 
 export default class extends Phaser.State {
     preload() {
-        this.load.image('piddy', 'assets/images/piddy.png');
+        this.load.image('piddy', 'assets/img/piddy.png');
     }
 
     create() {
