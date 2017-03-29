@@ -24,7 +24,7 @@ export default class extends Phaser.Sprite {
         //init fire
         this.fireEmitter = game.add.emitter(this.x, this.y, 400);
         this.fireEmitter.makeParticles(['fire1','fire3']);
-        this.fireEmitter.setYSpeed(1000,1000);
+        this.fireEmitter.setYSpeed(800,1000);
         this.fireEmitter.setXSpeed(-50, 50);
         this.fireEmitter.setAlpha(1, 0, 3000);
         this.fireEmitter.setScale(0.2, 0, 0.2, 0, 400);
@@ -32,10 +32,10 @@ export default class extends Phaser.Sprite {
 
         this.smokeEmitter = game.add.emitter(this.x, this.y, 400);
         this.smokeEmitter.makeParticles(['smoke1', 'smoke2']);
-        this.smokeEmitter.setYSpeed(500);
+        this.smokeEmitter.setYSpeed(400,500);
         this.smokeEmitter.setXSpeed(-50, 50);
         this.smokeEmitter.setAlpha(0.2, 0, 3000);
-        this.smokeEmitter.setScale(0.2, 0, 0.2, 0, 300);
+        this.smokeEmitter.setScale(0.3, 0, 0.3, 0, 300);
         this.smokeEmitter.start(false, 3000, 5);
 
 

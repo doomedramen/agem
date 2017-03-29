@@ -4093,7 +4093,7 @@ var _class = function (_Phaser$Sprite) {
         //init fire
         _this.fireEmitter = game.add.emitter(_this.x, _this.y, 400);
         _this.fireEmitter.makeParticles(['fire1', 'fire3']);
-        _this.fireEmitter.setYSpeed(1000, 1000);
+        _this.fireEmitter.setYSpeed(800, 1000);
         _this.fireEmitter.setXSpeed(-50, 50);
         _this.fireEmitter.setAlpha(1, 0, 3000);
         _this.fireEmitter.setScale(0.2, 0, 0.2, 0, 400);
@@ -4101,10 +4101,10 @@ var _class = function (_Phaser$Sprite) {
 
         _this.smokeEmitter = game.add.emitter(_this.x, _this.y, 400);
         _this.smokeEmitter.makeParticles(['smoke1', 'smoke2']);
-        _this.smokeEmitter.setYSpeed(500);
+        _this.smokeEmitter.setYSpeed(400, 500);
         _this.smokeEmitter.setXSpeed(-50, 50);
         _this.smokeEmitter.setAlpha(0.2, 0, 3000);
-        _this.smokeEmitter.setScale(0.2, 0, 0.2, 0, 300);
+        _this.smokeEmitter.setScale(0.3, 0, 0.3, 0, 300);
         _this.smokeEmitter.start(false, 3000, 5);
 
         //init gems
