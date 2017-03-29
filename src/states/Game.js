@@ -8,9 +8,9 @@ export default class extends Phaser.State {
         // const self = this;
         this.score = 0;
 
-        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        this.scale.pageAlignHorizontally = true;
-        this.scale.pageAlignVertically = false;
+        // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // this.scale.pageAlignHorizontally = true;
+        // this.scale.pageAlignVertically = false;
 
         this.fallSpeed = 1;
         this.timeBetweenGems = 2;
@@ -31,8 +31,11 @@ export default class extends Phaser.State {
     create() {
         const self = this;
 
-        //background
+        // background
         // this.background = this.add.sprite(0, 0, 'background');
+        // this.background = this.game.add.tileSprite(0, 0, 200, 200, 'background');
+        // this.background.width = this.world.width;
+        // this.background.height = this.world.height;
         // this.background.width = this.width;
         // this.background.height = this.height;
 
@@ -73,6 +76,20 @@ export default class extends Phaser.State {
 
         //UPDATE GEM POSITIONS
         this.gems.forEachAlive(gem => {
+
+            if (this.platform.checkCollision(gem)) {
+                //todo remove this gem
+                this.gems.remove(gem);
+            }
+
+            //TODO check if collides with platform
+            // this.platform.getAttractors().map(attractor=>{
+            //     if(Phaser.Rectangle.intersects(gem, attractor)){
+            //
+            //     }
+            // });
+
+
             gem.position.y += this.fallSpeed;
 
             if (gem.position.y > this.game.height + gem.height) {
