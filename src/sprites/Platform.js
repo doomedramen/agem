@@ -31,7 +31,7 @@ export default class extends Phaser.Sprite {
         this.fireEmitter.setYSpeed(800, 1000);
         this.fireEmitter.setXSpeed(-50, 50);
         this.fireEmitter.setAlpha(1, 0, 3000);
-        this.fireEmitter.setScale(0.2, 0, 0.2, 0, 400);
+        this.fireEmitter.setScale(game.SCALE * 0.4, 0, game.SCALE * 0.4, 0, 400);
         this.fireEmitter.start(false, 3000, 5);
 
         this.smokeEmitter = game.add.emitter(this.x, this.y, 400);
@@ -39,7 +39,7 @@ export default class extends Phaser.Sprite {
         this.smokeEmitter.setYSpeed(400, 500);
         this.smokeEmitter.setXSpeed(-50, 50);
         this.smokeEmitter.setAlpha(0.2, 0, 3000);
-        this.smokeEmitter.setScale(0.3, 0, 0.3, 0, 300);
+        this.smokeEmitter.setScale(game.SCALE * 0.5, 0, game.SCALE * 0.5, 0, 300);
         this.smokeEmitter.start(false, 3000, 5);
 
         this.full = false;
@@ -52,9 +52,6 @@ export default class extends Phaser.Sprite {
         for (let i = 1; i < this.maxGemRowSize + 1; i++) {
             let gemSet = [];
             for (let ii = 0; ii < i; ii++) {
-
-                // const gem = new Attractor({game: game, x: 200, y: 200});
-                // this.game.add.existing(gem);
                 gemSet.push(null);
             }
             this.gemRows.push(gemSet);
@@ -261,14 +258,14 @@ export default class extends Phaser.Sprite {
                         if (this.gemRows[i + 1][ii] instanceof Gem && this.gemRows[i + 1][ii + 1] instanceof Gem) {
                             //needs to be an attractor
                             console.log('making an attractor');
-                            this.gemRows[i][ii] = new Attractor(game, 200, 200);
+                            this.gemRows[i][ii] = new Attractor(this.game, 200, 200);
                             this.game.add.existing(this.gemRows[i][ii]);
                         }
 
                     } else {
                         //this is the bottom row! so make it an attractor
                         console.log('making an attractor');
-                        this.gemRows[i][ii] = new Attractor(game, 200, 200);
+                        this.gemRows[i][ii] = new Attractor(this.game, 200, 200);
                         this.game.add.existing(this.gemRows[i][ii]);
                     }
 
@@ -294,7 +291,10 @@ export default class extends Phaser.Sprite {
                     const x = startX + marginLeft + (ii * gem.width);
                     const startY = this.y;
                     const y = startY - (this.height / 2) - ((gem.height / 2) * i);
-                    gem.position.set(x, y); //1 pixel so you can tell them apart
+                    gem.position.set(x, y);
+
+                    // console.log(x, y);
+                    // console.log(this.x, this.y);
                 }
             })
         });

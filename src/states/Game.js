@@ -43,7 +43,7 @@ export default class extends Phaser.State {
     create() {
         const self = this;
 
-        this.SCALE = 1024 / this.scale.width;
+        this.SCALE = (this.scale.width / 1440) * 1.5; //TODO
 
         console.log('SCALE', this.SCALE);
         // background
@@ -79,6 +79,14 @@ export default class extends Phaser.State {
             const randomGemType = self.randonGem();
 
             let gem = new randomGemType(self, randomX, -100);
+
+            if (gem.x < gem.width / 2) {
+                gem.x = gem.width / 2;
+            }
+            if (gem.x > self.scale.width - (gem.width / 2)) {
+                gem.x = self.scale.width - (gem.width / 2);
+            }
+
             // let gem = new Gem(self, randomX, -100);
             self.gems.add(gem, true);
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);

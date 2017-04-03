@@ -1445,6 +1445,7 @@ var _class = function (_Phaser$Sprite) {
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, texture));
 
         _this.scale.set(game.SCALE);
+        console.log('IS IT THE SAME HERE', game.SCALE);
         _this.anchor.setTo(0.5);
         return _this;
     }
@@ -4068,9 +4069,11 @@ var _class = function (_Phaser$Sprite) {
         // const gemSize = game.scale.width / 20;
         // this.width = gemSize;
         // this.height = gemSize;
+        // this.scale.set(game.SCALE);
+        // console.log('ISSUE IS HERE',game.SCALE);
+        // this.scale.set(game.SCALE*10);
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'attractor'));
 
-        _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
         return _this;
     }
@@ -4355,7 +4358,7 @@ var _class = function (_Phaser$Sprite) {
         _this.fireEmitter.setYSpeed(800, 1000);
         _this.fireEmitter.setXSpeed(-50, 50);
         _this.fireEmitter.setAlpha(1, 0, 3000);
-        _this.fireEmitter.setScale(0.2, 0, 0.2, 0, 400);
+        _this.fireEmitter.setScale(game.SCALE * 0.4, 0, game.SCALE * 0.4, 0, 400);
         _this.fireEmitter.start(false, 3000, 5);
 
         _this.smokeEmitter = game.add.emitter(_this.x, _this.y, 400);
@@ -4363,7 +4366,7 @@ var _class = function (_Phaser$Sprite) {
         _this.smokeEmitter.setYSpeed(400, 500);
         _this.smokeEmitter.setXSpeed(-50, 50);
         _this.smokeEmitter.setAlpha(0.2, 0, 3000);
-        _this.smokeEmitter.setScale(0.3, 0, 0.3, 0, 300);
+        _this.smokeEmitter.setScale(game.SCALE * 0.5, 0, game.SCALE * 0.5, 0, 300);
         _this.smokeEmitter.start(false, 3000, 5);
 
         _this.full = false;
@@ -4375,9 +4378,6 @@ var _class = function (_Phaser$Sprite) {
         for (var i = 1; i < _this.maxGemRowSize + 1; i++) {
             var gemSet = [];
             for (var ii = 0; ii < i; ii++) {
-
-                // const gem = new Attractor({game: game, x: 200, y: 200});
-                // this.game.add.existing(gem);
                 gemSet.push(null);
             }
             _this.gemRows.push(gemSet);
@@ -4589,13 +4589,13 @@ var _class = function (_Phaser$Sprite) {
                             if (_this5.gemRows[i + 1][ii] instanceof _Gem2.default && _this5.gemRows[i + 1][ii + 1] instanceof _Gem2.default) {
                                 //needs to be an attractor
                                 console.log('making an attractor');
-                                _this5.gemRows[i][ii] = new _Attractor2.default(game, 200, 200);
+                                _this5.gemRows[i][ii] = new _Attractor2.default(_this5.game, 200, 200);
                                 _this5.game.add.existing(_this5.gemRows[i][ii]);
                             }
                         } else {
                             //this is the bottom row! so make it an attractor
                             console.log('making an attractor');
-                            _this5.gemRows[i][ii] = new _Attractor2.default(game, 200, 200);
+                            _this5.gemRows[i][ii] = new _Attractor2.default(_this5.game, 200, 200);
                             _this5.game.add.existing(_this5.gemRows[i][ii]);
                         }
                     }
@@ -4621,7 +4621,10 @@ var _class = function (_Phaser$Sprite) {
                         var x = startX + marginLeft + ii * gem.width;
                         var startY = _this6.y;
                         var y = startY - _this6.height / 2 - gem.height / 2 * i;
-                        gem.position.set(x, y); //1 pixel so you can tell them apart
+                        gem.position.set(x, y);
+
+                        // console.log(x, y);
+                        // console.log(this.x, this.y);
                     }
                 });
             });
@@ -4829,7 +4832,7 @@ var _class = function (_Phaser$State) {
         value: function create() {
             var self = this;
 
-            this.SCALE = 1024 / this.scale.width;
+            this.SCALE = this.scale.width / 1440 * 1.5; //TODO
 
             console.log('SCALE', this.SCALE);
             // background
@@ -4865,6 +4868,14 @@ var _class = function (_Phaser$State) {
                 var randomGemType = self.randonGem();
 
                 var gem = new randomGemType(self, randomX, -100);
+
+                if (gem.x < gem.width / 2) {
+                    gem.x = gem.width / 2;
+                }
+                if (gem.x > self.scale.width - gem.width / 2) {
+                    gem.x = self.scale.width - gem.width / 2;
+                }
+
                 // let gem = new Gem(self, randomX, -100);
                 self.gems.add(gem, true);
                 self.dropTimer.add(_phaser2.default.Timer.SECOND * self.timeBetweenGems, dropGem, self);
