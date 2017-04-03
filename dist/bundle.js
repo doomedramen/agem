@@ -1437,11 +1437,6 @@ var _class = function (_Phaser$Sprite) {
     function _class(game, x, y, texture) {
         _classCallCheck(this, _class);
 
-        // const gemSize = game.scale.width / 20;
-        // this.width = gemSize;
-        // this.height = gemSize;
-        // const scale = game.scale.width / this.width;
-        // this.scale.set(scale / 10);
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, texture));
 
         _this.scale.set(game.SCALE);
@@ -4065,14 +4060,9 @@ var _class = function (_Phaser$Sprite) {
     function _class(game, x, y) {
         _classCallCheck(this, _class);
 
-        // const gemSize = game.scale.width / 20;
-        // this.width = gemSize;
-        // this.height = gemSize;
-        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'attractor'));
+        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'gem-green'));
 
         _this.scale.set(game.SCALE);
-        // console.log('ISSUE IS HERE',game.SCALE);
-        // this.scale.set(game.SCALE*10);
         _this.anchor.setTo(0.5);
         return _this;
     }
