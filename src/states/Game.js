@@ -1,8 +1,14 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import {randomNumber} from '../utils';
-import Gem from '../sprites/Gem';
+// import Gem from '../sprites/Gem';
 import Platform from '../sprites/Platform';
+
+import GemBlue from '../sprites/GemBlue';
+import GemMagenta from '../sprites/GemMagenta';
+import GemGreen from '../sprites/GemGreen';
+import GemOrange from '../sprites/GemOrange';
+
 export default class extends Phaser.State {
     init() {
         // const self = this;
@@ -16,6 +22,8 @@ export default class extends Phaser.State {
         this.timeBetweenGems = 2;
         this.timeBetweenMeteors = 10;
 
+        this.GAMEOVER = false;
+
 
         this.gems = new Phaser.Group(this.game);
     }
@@ -25,7 +33,12 @@ export default class extends Phaser.State {
         this.game.load.image("background", "assets/img/background.png");
 
         Platform.Preload(this);
-        Gem.Preload(this);
+        // Gem.Preload(this);
+
+        GemBlue.Preload(game);
+        GemMagenta.Preload(game);
+        GemGreen.Preload(game);
+        GemOrange.Preload(game);
     }
 
     create() {
@@ -50,7 +63,7 @@ export default class extends Phaser.State {
         score.anchor.setTo(0.5);
 
         //PLATFORM
-        this.platform = new Platform({game: this});
+        this.platform = new Platform(this);
         this.game.add.existing(this.platform);
 
         //DROP TIMER
@@ -59,13 +72,19 @@ export default class extends Phaser.State {
         const dropGem = function () {
             const randomX = randomNumber(0, self.game.width);
 
-            let gem = new Gem({game: self, x: randomX, y: -100});
+            //TODO RandomGem
+
+            const randomGemType = self.randonGem();
+
+            let gem = new randomGemType(self, randomX, -100);
+            // let gem = new Gem(self, randomX, -100);
             self.gems.add(gem, true);
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);
         };
         dropGem();
 
     }
+
 
     update() {
 
@@ -82,14 +101,6 @@ export default class extends Phaser.State {
                 this.gems.remove(gem);
             }
 
-            //TODO check if collides with platform
-            // this.platform.getAttractors().map(attractor=>{
-            //     if(Phaser.Rectangle.intersects(gem, attractor)){
-            //
-            //     }
-            // });
-
-
             gem.position.y += this.fallSpeed;
 
             if (gem.position.y > this.game.height + gem.height) {
@@ -97,12 +108,27 @@ export default class extends Phaser.State {
             }
 
         });
+        this.GAMEOVER = this.platform.checkEndGame();
+
+        //TODO check endgame
+
+        if (this.GAMEOVER) {
+            this.gameOver();
+        }
 
 
         this.platform.x = this.game.input.x;
 
     }
 
+    gameOver(){
+        this.dropTimer.stop()
+    }
+
+    randonGem() {
+        const gemList = [GemOrange, GemBlue, GemMagenta, GemGreen];
+        return gemList[Math.floor(Math.random() * gemList.length)];
+    }
 
     render() {
 

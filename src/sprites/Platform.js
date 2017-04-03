@@ -17,7 +17,7 @@ export default class extends Phaser.Sprite {
     }
 
 
-    constructor({game}) {
+    constructor(game) {
         super(game, game.world.centerX, game.scale.height - 100, 'platform');
 
         const scale = game.scale.width / this.width;
@@ -40,6 +40,8 @@ export default class extends Phaser.Sprite {
         this.smokeEmitter.setAlpha(0.2, 0, 3000);
         this.smokeEmitter.setScale(0.3, 0, 0.3, 0, 300);
         this.smokeEmitter.start(false, 3000, 5);
+
+        this.full = false;
 
 
         //init gems
@@ -64,19 +66,6 @@ export default class extends Phaser.Sprite {
 
     }
 
-    // getAttractors() {
-    //
-    //     return this.gemRows.map(gemRow => {
-    //         gemRow.map(gem => {
-    //             if (gem instanceof Attractor) {
-    //                 return gem;
-    //             }
-    //         })
-    //
-    //     })
-    //
-    // }
-
     scaleBounds(rec, scale) {
 
         return new Phaser.Rectangle(rec.x + (rec.width / (scale / 2)), rec.y + (rec.height / (scale / 2)), rec.width * scale, rec.height * scale);
@@ -84,6 +73,7 @@ export default class extends Phaser.Sprite {
     }
 
     checkCollision(gem) {
+
         let collision = false;
         const boundsA = gem.getBounds();
 
@@ -119,6 +109,139 @@ export default class extends Phaser.Sprite {
         // this.gemRows[i][ii] = gem;
         // this.game.add.existing(gem);
         this.updateAttractors();
+        this.checkMatch();
+        this.checkIfFull();
+    }
+
+    checkIfFull() {
+        let full = true;
+        this.gemRows.map((gemRow, i) => {
+            gemRow.map((gem) => {
+                if (!(gem instanceof Gem) && gemRow.length - 1 === i) {
+                    full = false;
+                }
+            });
+        });
+
+        if (full) {
+            this.full = full;
+        }
+    }
+
+    checkEndGame() {
+        return this.full;
+    }
+
+    checkMatch() {
+
+        console.log('check match');
+
+        let self = this;
+
+        let touching = [];
+
+        this.gemRows.map((gemRow, i) => {
+            gemRow.map((gem, ii) => {
+
+
+                // console.log('y:', i, 'x:', ii);
+
+                if (gem) { //not null
+
+                    if (gem instanceof Gem) { //is a gem
+
+
+                        let currentSearch = [];
+
+                        function checkSibling(y, x) {
+                            let toCheck = [];
+                            // //check left
+                            toCheck.push({y, x: x - 1});
+                            // //check right
+                            toCheck.push({y, x: x + 1});
+
+                            if (self.gemRows[y - 1]) {
+                                // //check above'left
+                                toCheck.push({y: y - 1, x: x - 1});
+                                // //check above'right
+                                toCheck.push({y: y - 1, x});
+                            }
+                            if (self.gemRows[i + 1]) {
+                                // //check below'left
+                                toCheck.push({y: y + 1, x: x - 1});
+                                // //check below'right
+                                toCheck.push({y: y + 1, x});
+                            }
+                            let currentGem = self.gemRows[y][x];
+                            toCheck.map(tc => {
+                                console.log('CHECKING SIBLINGS');
+
+                                if (self.gemRows[tc.y]) {
+
+                                    let gcGem = self.gemRows[tc.y][tc.x];
+
+                                    if (gcGem) { //not null
+                                        if (gcGem.key === currentGem.key) {
+
+
+                                            // if(touching.length === 0 || )
+
+                                            const filterd = touching.filter(t => {
+                                                return t.x === tc.x && t.y === tc.y;
+                                            });
+
+
+                                            //TODO filter not idea
+                                            if (filterd.length <= 0) {
+
+                                                console.log('touch');
+
+                                                touching.push({y: tc.y, x: tc.x});
+                                                currentSearch.push({y: tc.y, x: tc.x});
+                                                checkSibling(tc.y, tc.x);
+
+                                            }
+
+
+                                        }
+                                        // checked.push(tc);
+                                    }
+                                }
+                            })
+                        }
+
+                        checkSibling(i, ii);
+
+
+                        console.log(currentSearch.length, 'touching');
+                        if (currentSearch.length >= 3) {
+                            console.log('EXPLODE THEM!!!');
+
+                            this.destroyGemsByPositions(currentSearch);
+
+                        }
+                    } else {
+                        // console.log('not a gem');
+                    }
+
+                }
+
+            });
+        });
+    }
+
+    destroyGemsByPositions(positions) {
+
+        positions.map(g => {
+
+            let gem = this.gemRows[g.y][g.x];
+            console.log(gem);
+            gem.destroy();
+            this.gemRows[g.y][g.x] = null;
+
+
+        });
+        this.updateAttractors();
     }
 
     updateAttractors() {
@@ -137,14 +260,14 @@ export default class extends Phaser.Sprite {
                         if (this.gemRows[i + 1][ii] instanceof Gem && this.gemRows[i + 1][ii + 1] instanceof Gem) {
                             //needs to be an attractor
                             console.log('making an attractor');
-                            this.gemRows[i][ii] = new Attractor({game: game, x: 200, y: 200});
+                            this.gemRows[i][ii] = new Attractor(game, 200, 200);
                             this.game.add.existing(this.gemRows[i][ii]);
                         }
 
                     } else {
                         //this is the bottom row! so make it an attractor
                         console.log('making an attractor');
-                        this.gemRows[i][ii] = new Attractor({game: game, x: 200, y: 200});
+                        this.gemRows[i][ii] = new Attractor(game, 200, 200);
                         this.game.add.existing(this.gemRows[i][ii]);
                     }
 
@@ -158,12 +281,6 @@ export default class extends Phaser.Sprite {
         });
         // console.log(this.gemRows);
     }
-
-
-    // addGem(gem) {
-    //     this.gemRows.push(gem);
-    // }
-
 
     update() {
 
