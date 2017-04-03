@@ -4069,11 +4069,11 @@ var _class = function (_Phaser$Sprite) {
         // const gemSize = game.scale.width / 20;
         // this.width = gemSize;
         // this.height = gemSize;
-        // this.scale.set(game.SCALE);
-        // console.log('ISSUE IS HERE',game.SCALE);
-        // this.scale.set(game.SCALE*10);
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'attractor'));
 
+        _this.scale.set(game.SCALE);
+        // console.log('ISSUE IS HERE',game.SCALE);
+        // this.scale.set(game.SCALE*10);
         _this.anchor.setTo(0.5);
         return _this;
     }

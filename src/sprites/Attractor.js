@@ -12,7 +12,7 @@ export default class extends Phaser.Sprite {
         // const gemSize = game.scale.width / 20;
         // this.width = gemSize;
         // this.height = gemSize;
-        // this.scale.set(game.SCALE);
+        this.scale.set(game.SCALE);
         // console.log('ISSUE IS HERE',game.SCALE);
         // this.scale.set(game.SCALE*10);
         this.anchor.setTo(0.5);
