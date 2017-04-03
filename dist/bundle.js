@@ -1445,7 +1445,6 @@ var _class = function (_Phaser$Sprite) {
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, texture));
 
         _this.scale.set(game.SCALE);
-        console.log('IS IT THE SAME HERE', game.SCALE);
         _this.anchor.setTo(0.5);
         return _this;
     }
@@ -4588,13 +4587,13 @@ var _class = function (_Phaser$Sprite) {
 
                             if (_this5.gemRows[i + 1][ii] instanceof _Gem2.default && _this5.gemRows[i + 1][ii + 1] instanceof _Gem2.default) {
                                 //needs to be an attractor
-                                console.log('making an attractor');
+                                // console.log('making an attractor');
                                 _this5.gemRows[i][ii] = new _Attractor2.default(_this5.game, 200, 200);
                                 _this5.game.add.existing(_this5.gemRows[i][ii]);
                             }
                         } else {
                             //this is the bottom row! so make it an attractor
-                            console.log('making an attractor');
+                            // console.log('making an attractor');
                             _this5.gemRows[i][ii] = new _Attractor2.default(_this5.game, 200, 200);
                             _this5.game.add.existing(_this5.gemRows[i][ii]);
                         }

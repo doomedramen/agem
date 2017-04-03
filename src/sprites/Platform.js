@@ -257,14 +257,14 @@ export default class extends Phaser.Sprite {
 
                         if (this.gemRows[i + 1][ii] instanceof Gem && this.gemRows[i + 1][ii + 1] instanceof Gem) {
                             //needs to be an attractor
-                            console.log('making an attractor');
+                            // console.log('making an attractor');
                             this.gemRows[i][ii] = new Attractor(this.game, 200, 200);
                             this.game.add.existing(this.gemRows[i][ii]);
                         }
 
                     } else {
                         //this is the bottom row! so make it an attractor
-                        console.log('making an attractor');
+                        // console.log('making an attractor');
                         this.gemRows[i][ii] = new Attractor(this.game, 200, 200);
                         this.game.add.existing(this.gemRows[i][ii]);
                     }

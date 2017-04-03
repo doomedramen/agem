@@ -11,7 +11,6 @@ export default class extends Phaser.Sprite {
         // const scale = game.scale.width / this.width;
         // this.scale.set(scale / 10);
         this.scale.set(game.SCALE);
-        console.log('IS IT THE SAME HERE', game.SCALE);
         this.anchor.setTo(0.5);
     }
 
