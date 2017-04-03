@@ -4060,7 +4060,7 @@ var _class = function (_Phaser$Sprite) {
     function _class(game, x, y) {
         _classCallCheck(this, _class);
 
-        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'gem-green'));
+        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'attractor'));
 
         _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
