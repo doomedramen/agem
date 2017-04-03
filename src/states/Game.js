@@ -33,7 +33,6 @@ export default class extends Phaser.State {
         this.game.load.image("background", "assets/img/background.png");
 
         Platform.Preload(this);
-        // Gem.Preload(this);
 
         GemBlue.Preload(game);
         GemMagenta.Preload(game);
@@ -44,6 +43,9 @@ export default class extends Phaser.State {
     create() {
         const self = this;
 
+        this.SCALE = 1024 / this.scale.width;
+
+        console.log('SCALE', this.SCALE);
         // background
         // this.background = this.add.sprite(0, 0, 'background');
         // this.background = this.game.add.tileSprite(0, 0, 200, 200, 'background');
@@ -121,7 +123,7 @@ export default class extends Phaser.State {
 
     }
 
-    gameOver(){
+    gameOver() {
         this.dropTimer.stop()
     }
 

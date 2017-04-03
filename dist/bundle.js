@@ -1437,11 +1437,14 @@ var _class = function (_Phaser$Sprite) {
     function _class(game, x, y, texture) {
         _classCallCheck(this, _class);
 
+        // const gemSize = game.scale.width / 20;
+        // this.width = gemSize;
+        // this.height = gemSize;
+        // const scale = game.scale.width / this.width;
+        // this.scale.set(scale / 10);
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, texture));
 
-        var gemSize = game.scale.width / 20;
-        _this.width = gemSize;
-        _this.height = gemSize;
+        _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
         return _this;
     }
@@ -4062,11 +4065,12 @@ var _class = function (_Phaser$Sprite) {
     function _class(game, x, y) {
         _classCallCheck(this, _class);
 
+        // const gemSize = game.scale.width / 20;
+        // this.width = gemSize;
+        // this.height = gemSize;
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y, 'attractor'));
 
-        var gemSize = game.scale.width / 20;
-        _this.width = gemSize;
-        _this.height = gemSize;
+        _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
         return _this;
     }
@@ -4338,10 +4342,11 @@ var _class = function (_Phaser$Sprite) {
     function _class(game) {
         _classCallCheck(this, _class);
 
+        // const scale = game.scale.width / this.width;
+        // this.scale.set(scale / 10);
         var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 100, 'platform'));
 
-        var scale = game.scale.width / _this.width;
-        _this.scale.set(scale / 4);
+        _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
 
         //init fire
@@ -4813,7 +4818,6 @@ var _class = function (_Phaser$State) {
             this.game.load.image("background", "assets/img/background.png");
 
             _Platform2.default.Preload(this);
-            // Gem.Preload(this);
 
             _GemBlue2.default.Preload(game);
             _GemMagenta2.default.Preload(game);
@@ -4825,6 +4829,9 @@ var _class = function (_Phaser$State) {
         value: function create() {
             var self = this;
 
+            this.SCALE = 1024 / this.scale.width;
+
+            console.log('SCALE', this.SCALE);
             // background
             // this.background = this.add.sprite(0, 0, 'background');
             // this.background = this.game.add.tileSprite(0, 0, 200, 200, 'background');
