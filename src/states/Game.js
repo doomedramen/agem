@@ -22,12 +22,11 @@ export default class extends Phaser.State {
 
 
         this.gems = new Phaser.Group(this.game);
-        game.world.bringToTop(this.gems);
     }
 
     preload() {
 
-        this.game.load.image("background", "assets/img/background.png");
+        this.game.load.image("background", "assets/img/background2.png");
 
         game.load.bitmapFont('number-font', 'assets/fonts/number-font.png', 'assets/fonts/number-font.xml');
 
@@ -42,6 +41,7 @@ export default class extends Phaser.State {
 
         // console.log('SCALE', this.SCALE);
         // background
+        this.background = game.add.tileSprite(0, 0, game.scale.width, game.scale.height, "background");
         // this.background = this.add.sprite(0, 0, 'background');
         // this.background.width = this.scale.width;
         // this.background.height = this.scale.height;
@@ -49,8 +49,9 @@ export default class extends Phaser.State {
         // this.background.width = this.width;
         // this.background.height = this.height;
 
-        //SCORE
+        game.world.bringToTop(this.gems);
 
+        //SCORE
         ////background
         const bgHeight = 254 * this.SCALE;
         let drawnObject;
@@ -101,6 +102,7 @@ export default class extends Phaser.State {
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);
         };
         dropGem();
+
 
     }
 

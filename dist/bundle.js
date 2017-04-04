@@ -3046,13 +3046,12 @@ var _class = function (_Phaser$State) {
             this.GAMEOVER = false;
 
             this.gems = new _phaser2.default.Group(this.game);
-            game.world.bringToTop(this.gems);
         }
     }, {
         key: 'preload',
         value: function preload() {
 
-            this.game.load.image("background", "assets/img/background.png");
+            this.game.load.image("background", "assets/img/background2.png");
 
             game.load.bitmapFont('number-font', 'assets/fonts/number-font.png', 'assets/fonts/number-font.xml');
 
@@ -3068,6 +3067,7 @@ var _class = function (_Phaser$State) {
 
             // console.log('SCALE', this.SCALE);
             // background
+            this.background = game.add.tileSprite(0, 0, game.scale.width, game.scale.height, "background");
             // this.background = this.add.sprite(0, 0, 'background');
             // this.background.width = this.scale.width;
             // this.background.height = this.scale.height;
@@ -3075,8 +3075,9 @@ var _class = function (_Phaser$State) {
             // this.background.width = this.width;
             // this.background.height = this.height;
 
-            //SCORE
+            game.world.bringToTop(this.gems);
 
+            //SCORE
             ////background
             var bgHeight = 254 * this.SCALE;
             var drawnObject = void 0;
