@@ -14,9 +14,12 @@ export default class extends Phaser.State {
         // const self = this;
         this.score = 9876543210;
 
-        this.fallSpeed = 1;
-        this.timeBetweenGems = 2;
+        this.fallSpeed = 3;
+        this.fallSpeedStep = 0.001;
+        this.timeBetweenGems = 3;
+        this.timeBetweenGemsStep = 0.0001;
         this.timeBetweenMeteors = 10;
+
 
         this.GAMEOVER = false;
 
@@ -39,15 +42,10 @@ export default class extends Phaser.State {
 
         this.SCALE = (this.scale.width / this.constructor.getScaler());
 
-        // console.log('SCALE', this.SCALE);
         // background
         this.background = game.add.tileSprite(0, 0, game.scale.width, game.scale.height, "background");
-        // this.background = this.add.sprite(0, 0, 'background');
         // this.background.width = this.scale.width;
         // this.background.height = this.scale.height;
-
-        // this.background.width = this.width;
-        // this.background.height = this.height;
 
         game.world.bringToTop(this.gems);
 
@@ -67,11 +65,6 @@ export default class extends Phaser.State {
         ////numbers
         let scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', `${this.score}`, this.SCALE * 80);
         scoreboard.anchor.setTo(0.5);
-        // score.font = 'Bangers';
-        // score.padding.set(10, 16);
-        // score.fontSize = 40;
-        // score.fill = '#CCD1D9';
-        // score.smoothed = false;
 
 
         //PLATFORM
@@ -82,13 +75,10 @@ export default class extends Phaser.State {
         this.dropTimer = this.game.time.create(false);
         this.dropTimer.start();
         const dropGem = function () {
+
             const randomX = randomNumber(0, self.game.width);
-
-            //TODO RandomGem
-
             const randomGemType = Gems.RandomGem();
-
-            let gem = new randomGemType(self, randomX, -100);
+            const gem = new randomGemType(self, randomX, -100);
 
             if (gem.x < gem.width / 2) {
                 gem.x = gem.width / 2;
@@ -113,8 +103,8 @@ export default class extends Phaser.State {
     update() {
 
         //UPDATE SPEEDS
-        this.fallSpeed += 0.0001;
-        this.timeBetweenGems -= 0.0001;
+        this.fallSpeed += this.fallSpeedStep;
+        this.timeBetweenGems -= this.timeBetweenGemsStep;
 
 
         //UPDATE GEM POSITIONS
@@ -135,7 +125,6 @@ export default class extends Phaser.State {
         this.GAMEOVER = this.platform.checkEndGame();
 
         //TODO check endgame
-
         if (this.GAMEOVER) {
             this.gameOver();
         }
@@ -148,11 +137,6 @@ export default class extends Phaser.State {
     gameOver() {
         this.dropTimer.stop()
     }
-
-    // randonGem() {
-    //     const gemList = [GemOrange, GemBlue, GemMagenta, GemGreen];
-    //     return gemList[Math.floor(Math.random() * gemList.length)];
-    // }
 
     render() {
 

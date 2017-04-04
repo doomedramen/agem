@@ -105,9 +105,10 @@ export default class extends Phaser.Sprite {
             }
         }
 
-        this.updateAttractors();
+
         this.checkMatch();
         this.checkIfFull();
+        this.updateAttractors();
     }
 
     checkIfFull() {
@@ -199,9 +200,9 @@ export default class extends Phaser.Sprite {
                         checkSibling(i, ii);
 
 
-                        console.log(currentSearch.length, 'touching');
+                        // console.log(currentSearch.length, 'touching');
                         if (currentSearch.length >= 3) {
-                            console.log('EXPLODE THEM!!!');
+                            // console.log('EXPLODE THEM!!!');
 
                             this.destroyGemsByPositions(currentSearch);
 
@@ -246,19 +247,20 @@ export default class extends Phaser.Sprite {
             const self = this;
 
             //EFFECT 1
-            this.flyGemToScore(gem)
-                .onComplete.add(function () {
-                gem.destroy();
-                self.gemRows[g.y][g.x] = null;
-            }, this);
+            // this.flyGemToScore(gem)
+            //     .onComplete.add(function () {
+            //     gem.destroy();
+            //     self.gemRows[g.y][g.x] = null;
+            // this.updateAttractors();//TODO would prefer not to check twice
+            // }, this);
             // .onCompleteCallback(function () {
             //     gem.destroy();
             //     self.gemRows[g.y][g.x] = null;
             // })
             //EFFECT 2
-            // this.addGemExplosion(gem);
-            // gem.destroy();
-            // self.gemRows[g.y][g.x] = null;
+            this.addGemExplosion(gem);
+            gem.destroy();
+            self.gemRows[g.y][g.x] = null;
 
             // console.log(gem);
             // gem.destroy();
