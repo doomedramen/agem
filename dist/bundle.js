@@ -3037,15 +3037,19 @@ var _class = function (_Phaser$State) {
         key: 'init',
         value: function init() {
             // const self = this;
-            this.score = 9876543210;
+            this.score = 0;
 
             this.fallSpeed = 3;
-            this.fallSpeedStep = 0.001;
+            this.fallSpeedStep = 0.0001;
             this.timeBetweenGems = 3;
             this.timeBetweenGemsStep = 0.0001;
             this.timeBetweenMeteors = 10;
 
             this.GAMEOVER = false;
+
+            this.score_gem_missed = -10;
+            this.score_gem_collected = 10;
+            this.score_gem_exploded = 100;
 
             this.gems = new _phaser2.default.Group(this.game);
         }
@@ -3088,8 +3092,8 @@ var _class = function (_Phaser$State) {
             drawnObject.anchor.setTo(0.5, 0.5);
 
             ////numbers
-            var scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', '' + this.score, this.SCALE * 80);
-            scoreboard.anchor.setTo(0.5);
+            this.scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', '' + this.score, this.SCALE * 80);
+            this.scoreboard.anchor.setTo(0.5);
 
             //PLATFORM
             this.platform = new _Platform2.default(this);
@@ -3117,11 +3121,19 @@ var _class = function (_Phaser$State) {
             };
             dropGem();
         }
+    }, {
+        key: 'updateScore',
+        value: function updateScore(number) {
+            this.score += number;
 
-        // updateScore() {
-        //     this.scoreNumbers = Numbers.getScore(this);
-        // }
+            if (this.score < 0) {
+                this.score = 0;
+            }
 
+            this.scoreboard.setText(this.score);
+
+            console.log(number, this.score);
+        }
     }, {
         key: 'update',
         value: function update() {
@@ -3135,13 +3147,15 @@ var _class = function (_Phaser$State) {
             this.gems.forEachAlive(function (gem) {
 
                 if (_this2.platform.checkCollision(gem)) {
-                    //todo remove this gem
+                    //captured gem
                     _this2.gems.remove(gem);
                 }
 
                 gem.position.y += _this2.fallSpeed;
 
                 if (gem.position.y > _this2.game.height + gem.height) {
+                    //missed a gem
+                    _this2.updateScore(_this2.score_gem_missed);
                     gem.destroy();
                 }
             });
@@ -4332,7 +4346,7 @@ var _class = function (_Phaser$Sprite) {
 
         // const scale = game.scale.width / this.width;
         // this.scale.set(scale / 10);
-        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 100, 'platform'));
+        var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, game.world.centerX, game.scale.height - 100 * game.SCALE, 'platform'));
 
         _this.scale.set(game.SCALE);
         _this.anchor.setTo(0.5);
@@ -4378,7 +4392,6 @@ var _class = function (_Phaser$Sprite) {
     _createClass(_class, [{
         key: 'scaleBounds',
         value: function scaleBounds(rec, scale) {
-
             return new _phaser2.default.Rectangle(rec.x + rec.width / (scale / 2), rec.y + rec.height / (scale / 2), rec.width * scale, rec.height * scale);
         }
     }, {
@@ -4407,6 +4420,20 @@ var _class = function (_Phaser$Sprite) {
             return collision;
         }
     }, {
+        key: 'moveGem',
+        value: function moveGem(y, x, yy, xx) {
+            this.gemRows[yy][xx] = this.gemRows[y][x];
+            this.gemRows[y][x] = null;
+        }
+    }, {
+        key: 'postChangeCheck',
+        value: function postChangeCheck() {
+
+            this.checkMatch();
+            this.checkIfFull();
+            this.updateAttractors();
+        }
+    }, {
         key: 'addGem',
         value: function addGem(gem, i, ii) {
 
@@ -4415,12 +4442,10 @@ var _class = function (_Phaser$Sprite) {
                     this.gemRows[i][ii].destroy();
                     this.gemRows[i][ii] = gem;
                     this.game.add.existing(gem);
+                    this.game.updateScore(this.game.score_gem_collected);
                 }
             }
-
-            this.checkMatch();
-            this.checkIfFull();
-            this.updateAttractors();
+            this.postChangeCheck();
         }
     }, {
         key: 'checkIfFull',
@@ -4445,7 +4470,62 @@ var _class = function (_Phaser$Sprite) {
         }
     }, {
         key: 'checkGemGravity',
-        value: function checkGemGravity() {}
+        value: function checkGemGravity() {
+
+            // let gemsFell = false;
+            //
+            // for (let i = this.gemRows.length - 1; i >= 0; i--) {
+            //
+            //     let gemRow = this.gemRows[i];
+            //
+            //     gemRow.map((gem, ii) => {
+            //
+            //         let rand = Math.round(Math.random());
+            //         if (this.gemRows[i + 1]) {
+            //
+            //             //check below left
+            //             let bl = undefined;
+            //             if (ii > 0 && ii < gemRow.length - 1) {
+            //                 bl = this.gemRows[i + 1][ii];
+            //             }
+            //
+            //             //check below right
+            //             let br = undefined;
+            //             if (ii > 0 && ii < gemRow.length - 1) {
+            //                 br = this.gemRows[i + 1][ii + 1];
+            //             }
+            //
+            //             if (!bl || !br) {
+            //                 gemsFell = true;
+            //             }
+            //
+            //             if (!bl && !br) {
+            //
+            //                 if (rand === 1) { //can be 0 or 1
+            //                     //go left
+            //                     this.moveGem(i, ii, i + 1, ii);
+            //                 } else {
+            //                     //go right
+            //                     this.moveGem(i, ii, i + 1, ii + 1);
+            //                 }
+            //
+            //             } else if (!bl) {
+            //                 //go left
+            //                 this.moveGem(i, ii, i + 1, ii);
+            //             } else if (!br) {
+            //                 //go right
+            //                 this.moveGem(i, ii, i + 1, ii + 1);
+            //             }
+            //         }
+            //     })
+            // }
+            //
+            //
+            // if (gemsFell) {
+            //     this.postChangeCheck();
+            // }
+
+        }
     }, {
         key: 'checkMatch',
         value: function checkMatch() {
@@ -4578,11 +4658,13 @@ var _class = function (_Phaser$Sprite) {
                 // gem.destroy();
                 // this.gemRows[g.y][g.x] = null;
 
+
+                //update score
+                _this4.game.updateScore(_this4.game.score_gem_exploded);
             });
 
             //TODO
             this.checkGemGravity();
-
             this.updateAttractors();
         }
     }, {
@@ -4637,6 +4719,12 @@ var _class = function (_Phaser$Sprite) {
             // }
 
             this.gemRows.slice(0).reverse().map(function (gemRow, i) {
+                // for (let i = 0 ; i < 0; i--) {
+                // for (let i = this.gemRows.length - 1; i >= 0; i--) {
+                // this.gemRows.map((gemRow, i) => {
+                // let gemRow = this.gemRows[i];
+
+
                 gemRow.map(function (gem, ii) {
 
                     if (gem) {
@@ -4652,6 +4740,7 @@ var _class = function (_Phaser$Sprite) {
                     }
                 });
             });
+            // }
 
             //update emitters
             this.fireEmitter.emitX = this.x;

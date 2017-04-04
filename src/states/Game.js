@@ -12,16 +12,20 @@ export default class extends Phaser.State {
 
     init() {
         // const self = this;
-        this.score = 9876543210;
+        this.score = 0;
 
         this.fallSpeed = 3;
-        this.fallSpeedStep = 0.001;
+        this.fallSpeedStep = 0.0001;
         this.timeBetweenGems = 3;
         this.timeBetweenGemsStep = 0.0001;
         this.timeBetweenMeteors = 10;
 
 
         this.GAMEOVER = false;
+
+        this.score_gem_missed = -10;
+        this.score_gem_collected = 10;
+        this.score_gem_exploded = 100;
 
 
         this.gems = new Phaser.Group(this.game);
@@ -63,8 +67,8 @@ export default class extends Phaser.State {
         drawnObject.anchor.setTo(0.5, 0.5);
 
         ////numbers
-        let scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', `${this.score}`, this.SCALE * 80);
-        scoreboard.anchor.setTo(0.5);
+        this.scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', `${this.score}`, this.SCALE * 80);
+        this.scoreboard.anchor.setTo(0.5);
 
 
         //PLATFORM
@@ -96,9 +100,17 @@ export default class extends Phaser.State {
 
     }
 
-    // updateScore() {
-    //     this.scoreNumbers = Numbers.getScore(this);
-    // }
+    updateScore(number) {
+        this.score += number;
+
+        if (this.score < 0) {
+            this.score = 0;
+        }
+
+        this.scoreboard.setText(this.score);
+
+        console.log(number, this.score);
+    }
 
     update() {
 
@@ -111,13 +123,14 @@ export default class extends Phaser.State {
         this.gems.forEachAlive(gem => {
 
             if (this.platform.checkCollision(gem)) {
-                //todo remove this gem
+                //captured gem
                 this.gems.remove(gem);
             }
 
             gem.position.y += this.fallSpeed;
 
-            if (gem.position.y > this.game.height + gem.height) {
+            if (gem.position.y > this.game.height + gem.height) { //missed a gem
+                this.updateScore(this.score_gem_missed);
                 gem.destroy();
             }
 

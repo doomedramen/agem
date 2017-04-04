@@ -18,7 +18,7 @@ export default class extends Phaser.Sprite {
 
 
     constructor(game) {
-        super(game, game.world.centerX, game.scale.height - 100, 'platform');
+        super(game, game.world.centerX, game.scale.height - (100 * game.SCALE), 'platform');
 
         // const scale = game.scale.width / this.width;
         // this.scale.set(scale / 10);
@@ -66,9 +66,7 @@ export default class extends Phaser.Sprite {
     }
 
     scaleBounds(rec, scale) {
-
         return new Phaser.Rectangle(rec.x + (rec.width / (scale / 2)), rec.y + (rec.height / (scale / 2)), rec.width * scale, rec.height * scale);
-
     }
 
     checkCollision(gem) {
@@ -95,6 +93,18 @@ export default class extends Phaser.Sprite {
 
     }
 
+    moveGem(y, x, yy, xx) {
+        this.gemRows[yy][xx] = this.gemRows[y][x];
+        this.gemRows[y][x] = null;
+    }
+
+    postChangeCheck() {
+
+        this.checkMatch();
+        this.checkIfFull();
+        this.updateAttractors();
+    }
+
     addGem(gem, i, ii) {
 
         if (this.gemRows[i][ii]) {
@@ -102,13 +112,11 @@ export default class extends Phaser.Sprite {
                 this.gemRows[i][ii].destroy();
                 this.gemRows[i][ii] = gem;
                 this.game.add.existing(gem);
+                this.game.updateScore(this.game.score_gem_collected);
             }
         }
+        this.postChangeCheck();
 
-
-        this.checkMatch();
-        this.checkIfFull();
-        this.updateAttractors();
     }
 
     checkIfFull() {
@@ -131,6 +139,59 @@ export default class extends Phaser.Sprite {
     }
 
     checkGemGravity() {
+
+        // let gemsFell = false;
+        //
+        // for (let i = this.gemRows.length - 1; i >= 0; i--) {
+        //
+        //     let gemRow = this.gemRows[i];
+        //
+        //     gemRow.map((gem, ii) => {
+        //
+        //         let rand = Math.round(Math.random());
+        //         if (this.gemRows[i + 1]) {
+        //
+        //             //check below left
+        //             let bl = undefined;
+        //             if (ii > 0 && ii < gemRow.length - 1) {
+        //                 bl = this.gemRows[i + 1][ii];
+        //             }
+        //
+        //             //check below right
+        //             let br = undefined;
+        //             if (ii > 0 && ii < gemRow.length - 1) {
+        //                 br = this.gemRows[i + 1][ii + 1];
+        //             }
+        //
+        //             if (!bl || !br) {
+        //                 gemsFell = true;
+        //             }
+        //
+        //             if (!bl && !br) {
+        //
+        //                 if (rand === 1) { //can be 0 or 1
+        //                     //go left
+        //                     this.moveGem(i, ii, i + 1, ii);
+        //                 } else {
+        //                     //go right
+        //                     this.moveGem(i, ii, i + 1, ii + 1);
+        //                 }
+        //
+        //             } else if (!bl) {
+        //                 //go left
+        //                 this.moveGem(i, ii, i + 1, ii);
+        //             } else if (!br) {
+        //                 //go right
+        //                 this.moveGem(i, ii, i + 1, ii + 1);
+        //             }
+        //         }
+        //     })
+        // }
+        //
+        //
+        // if (gemsFell) {
+        //     this.postChangeCheck();
+        // }
 
     }
 
@@ -267,11 +328,12 @@ export default class extends Phaser.Sprite {
             // this.gemRows[g.y][g.x] = null;
 
 
+            //update score
+            this.game.updateScore(this.game.score_gem_exploded);
         });
 
         //TODO
         this.checkGemGravity();
-
         this.updateAttractors();
     }
 
@@ -323,6 +385,12 @@ export default class extends Phaser.Sprite {
         // }
 
         this.gemRows.slice(0).reverse().map((gemRow, i) => {
+            // for (let i = 0 ; i < 0; i--) {
+            // for (let i = this.gemRows.length - 1; i >= 0; i--) {
+            // this.gemRows.map((gemRow, i) => {
+            // let gemRow = this.gemRows[i];
+
+
             gemRow.map((gem, ii) => {
 
                 if (gem) {
@@ -338,6 +406,7 @@ export default class extends Phaser.Sprite {
                 }
             })
         });
+        // }
 
         //update emitters
         this.fireEmitter.emitX = this.x;
