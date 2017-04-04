@@ -1,22 +1,18 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import {randomNumber} from '../utils';
-// import Gem from '../sprites/Gem';
 import Platform from '../sprites/Platform';
-
-import GemBlue from '../sprites/GemBlue';
-import GemMagenta from '../sprites/GemMagenta';
-import GemGreen from '../sprites/GemGreen';
-import GemOrange from '../sprites/GemOrange';
+import Gems from '../sprites/gems/Gems';
 
 export default class extends Phaser.State {
+
+    static getScaler() {
+        return 1440 / 1.5;
+    }
+
     init() {
         // const self = this;
-        this.score = 0;
-
-        // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        // this.scale.pageAlignHorizontally = true;
-        // this.scale.pageAlignVertically = false;
+        this.score = 9876543210;
 
         this.fallSpeed = 1;
         this.timeBetweenGems = 2;
@@ -26,43 +22,56 @@ export default class extends Phaser.State {
 
 
         this.gems = new Phaser.Group(this.game);
+        game.world.bringToTop(this.gems);
     }
 
     preload() {
 
         this.game.load.image("background", "assets/img/background.png");
 
-        Platform.Preload(this);
+        game.load.bitmapFont('number-font', 'assets/fonts/number-font.png', 'assets/fonts/number-font.xml');
 
-        GemBlue.Preload(game);
-        GemMagenta.Preload(game);
-        GemGreen.Preload(game);
-        GemOrange.Preload(game);
+        Platform.Preload(this);
+        Gems.Preload(game);
     }
 
     create() {
         const self = this;
 
-        this.SCALE = (this.scale.width / 1440) * 1.5; //TODO
+        this.SCALE = (this.scale.width / this.constructor.getScaler());
 
-        console.log('SCALE', this.SCALE);
+        // console.log('SCALE', this.SCALE);
         // background
         // this.background = this.add.sprite(0, 0, 'background');
-        // this.background = this.game.add.tileSprite(0, 0, 200, 200, 'background');
-        // this.background.width = this.world.width;
-        // this.background.height = this.world.height;
+        // this.background.width = this.scale.width;
+        // this.background.height = this.scale.height;
+
         // this.background.width = this.width;
         // this.background.height = this.height;
 
         //SCORE
-        const scoreText = `${this.score}`;
-        let score = this.add.text(this.world.centerX, 40, scoreText);
+
+        ////background
+        const bgHeight = 254 * this.SCALE;
+        let drawnObject;
+        let bmd = game.add.bitmapData(this.scale.width, bgHeight);
+
+        bmd.ctx.beginPath();
+        bmd.ctx.rect(0, 0, this.scale.width, bgHeight);
+        bmd.ctx.fillStyle = '#000000'; //black
+        bmd.ctx.fill();
+        drawnObject = game.add.sprite(game.world.centerX, 0, bmd);
+        drawnObject.anchor.setTo(0.5, 0.5);
+
+        ////numbers
+        let scoreboard = this.add.bitmapText(this.world.centerX, 46 * this.SCALE, 'number-font', `${this.score}`, this.SCALE * 80);
+        scoreboard.anchor.setTo(0.5);
         // score.font = 'Bangers';
-        score.padding.set(10, 16);
-        score.fontSize = 40;
-        score.fill = '#CCD1D9';
-        score.smoothed = false;
-        score.anchor.setTo(0.5);
+        // score.padding.set(10, 16);
+        // score.fontSize = 40;
+        // score.fill = '#CCD1D9';
+        // score.smoothed = false;
+
 
         //PLATFORM
         this.platform = new Platform(this);
@@ -76,7 +85,7 @@ export default class extends Phaser.State {
 
             //TODO RandomGem
 
-            const randomGemType = self.randonGem();
+            const randomGemType = Gems.RandomGem();
 
             let gem = new randomGemType(self, randomX, -100);
 
@@ -95,6 +104,9 @@ export default class extends Phaser.State {
 
     }
 
+    // updateScore() {
+    //     this.scoreNumbers = Numbers.getScore(this);
+    // }
 
     update() {
 
@@ -135,19 +147,19 @@ export default class extends Phaser.State {
         this.dropTimer.stop()
     }
 
-    randonGem() {
-        const gemList = [GemOrange, GemBlue, GemMagenta, GemGreen];
-        return gemList[Math.floor(Math.random() * gemList.length)];
-    }
+    // randonGem() {
+    //     const gemList = [GemOrange, GemBlue, GemMagenta, GemGreen];
+    //     return gemList[Math.floor(Math.random() * gemList.length)];
+    // }
 
     render() {
 
         //SHOW DEBUG INFO
         if (__DEV__) {
             this.game.debug.text(`gems:${this.gems.length}`, 32, 32);
-            this.game.debug.text(`fallSpeed:${this.fallSpeed}`, 32, 64);
-            this.game.debug.text(`timeBetweenGems:${this.timeBetweenGems}`, 32, 96);
-            this.game.debug.text(`platform X:${this.platform.x}`, 32, 128);
+            // this.game.debug.text(`fallSpeed:${this.fallSpeed}`, 32, 64);
+            // this.game.debug.text(`timeBetweenGems:${this.timeBetweenGems}`, 32, 96);
+            // this.game.debug.text(`platform X:${this.platform.x}`, 32, 128);
         }
     }
 }

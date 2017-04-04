@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import {centerGameObjects} from '../utils'
+import Game from './Game';
 
 export default class extends Phaser.State {
     preload() {
@@ -10,7 +11,13 @@ export default class extends Phaser.State {
 
         this.touched = false;
 
+
         this.logo = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'piddy');
+        this.logo.anchor.setTo(0.5);
+
+        this.logo.scale.set((this.scale.width / Game.getScaler()) * 1);
+
+
         centerGameObjects([this.logo]);
     }
 

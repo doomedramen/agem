@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Gem from './Gem';
+import Gem from './gems/Gem';
 import Attractor from './Attractor';
 
 export default class extends Phaser.Sprite {
@@ -41,6 +41,7 @@ export default class extends Phaser.Sprite {
         this.smokeEmitter.setAlpha(0.2, 0, 3000);
         this.smokeEmitter.setScale(game.SCALE * 0.5, 0, game.SCALE * 0.5, 0, 300);
         this.smokeEmitter.start(false, 3000, 5);
+
 
         this.full = false;
 
@@ -104,8 +105,6 @@ export default class extends Phaser.Sprite {
             }
         }
 
-        // this.gemRows[i][ii] = gem;
-        // this.game.add.existing(gem);
         this.updateAttractors();
         this.checkMatch();
         this.checkIfFull();
@@ -130,10 +129,11 @@ export default class extends Phaser.Sprite {
         return this.full;
     }
 
+    checkGemGravity() {
+
+    }
+
     checkMatch() {
-
-        console.log('check match');
-
         let self = this;
 
         let touching = [];
@@ -142,22 +142,14 @@ export default class extends Phaser.Sprite {
             gemRow.map((gem, ii) => {
 
 
-                // console.log('y:', i, 'x:', ii);
-
                 if (gem) { //not null
 
                     if (gem instanceof Gem) { //is a gem
-
 
                         let currentSearch = [];
 
                         function checkSibling(y, x) {
                             let toCheck = [];
-                            // //check left
-                            toCheck.push({y, x: x - 1});
-                            // //check right
-                            toCheck.push({y, x: x + 1});
-
                             if (self.gemRows[y - 1]) {
                                 // //check above'left
                                 toCheck.push({y: y - 1, x: x - 1});
@@ -166,13 +158,13 @@ export default class extends Phaser.Sprite {
                             }
                             if (self.gemRows[i + 1]) {
                                 // //check below'left
-                                toCheck.push({y: y + 1, x: x - 1});
-                                // //check below'right
                                 toCheck.push({y: y + 1, x});
+                                // //check below'right
+                                toCheck.push({y: y + 1, x: x + 1});
                             }
+
                             let currentGem = self.gemRows[y][x];
                             toCheck.map(tc => {
-                                console.log('CHECKING SIBLINGS');
 
                                 if (self.gemRows[tc.y]) {
 
@@ -182,8 +174,6 @@ export default class extends Phaser.Sprite {
                                         if (gcGem.key === currentGem.key) {
 
 
-                                            // if(touching.length === 0 || )
-
                                             const filterd = touching.filter(t => {
                                                 return t.x === tc.x && t.y === tc.y;
                                             });
@@ -192,7 +182,6 @@ export default class extends Phaser.Sprite {
                                             //TODO filter not idea
                                             if (filterd.length <= 0) {
 
-                                                console.log('touch');
 
                                                 touching.push({y: tc.y, x: tc.x});
                                                 currentSearch.push({y: tc.y, x: tc.x});
@@ -202,7 +191,6 @@ export default class extends Phaser.Sprite {
 
 
                                         }
-                                        // checked.push(tc);
                                     }
                                 }
                             })
@@ -228,17 +216,60 @@ export default class extends Phaser.Sprite {
         });
     }
 
+    addGemExplosion(gem) {
+        let killerEmitter = game.add.emitter(gem.x, gem.y, 100);
+        killerEmitter.makeParticles(gem.getName());
+        killerEmitter.setYSpeed(100, 300);
+        killerEmitter.setXSpeed(-50, 50);
+        killerEmitter.minRotation = 10;
+        killerEmitter.maxRotation = 50;
+        killerEmitter.setScale(0.4, 0.5, 0.4, 0.5);
+        // killerEmitter.setAlpha(1, 0, 3000);
+        // killerEmitter.setScale(game.SCALE * 0.4, 0, game.SCALE * 0.4, 0, 1000);
+        killerEmitter.start(true, 4000, null, 10);
+
+        function destroyEmitter() {
+            killerEmitter.destroy();
+        }
+
+        game.time.events.add(5000, destroyEmitter, this);
+    }
+
+    flyGemToScore(gem) {
+        return game.add.tween(gem).to({y: 0, x: game.world.centerX}, 1000, Phaser.Easing.Linear.None, true);
+    }
+
     destroyGemsByPositions(positions) {
 
         positions.map(g => {
-
             let gem = this.gemRows[g.y][g.x];
-            console.log(gem);
-            gem.destroy();
-            this.gemRows[g.y][g.x] = null;
+            const self = this;
+
+            //EFFECT 1
+            this.flyGemToScore(gem)
+                .onComplete.add(function () {
+                gem.destroy();
+                self.gemRows[g.y][g.x] = null;
+            }, this);
+            // .onCompleteCallback(function () {
+            //     gem.destroy();
+            //     self.gemRows[g.y][g.x] = null;
+            // })
+            //EFFECT 2
+            // this.addGemExplosion(gem);
+            // gem.destroy();
+            // self.gemRows[g.y][g.x] = null;
+
+            // console.log(gem);
+            // gem.destroy();
+            // this.gemRows[g.y][g.x] = null;
 
 
         });
+
+        //TODO
+        this.checkGemGravity();
+
         this.updateAttractors();
     }
 
@@ -272,15 +303,22 @@ export default class extends Phaser.Sprite {
                 }
 
 
-                // if (gem instanceof Attractor) {
-                //
-                // }
             })
         });
         // console.log(this.gemRows);
     }
 
     update() {
+
+        // if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        //     this.gemRows.map(row => {
+        //         row.map(gem => {
+        //             if (gem instanceof Gem) {
+        //                 this.addGemExplosion(gem);
+        //             }
+        //         })
+        //     })
+        // }
 
         this.gemRows.slice(0).reverse().map((gemRow, i) => {
             gemRow.map((gem, ii) => {
