@@ -82,6 +82,7 @@ export default class extends Phaser.State {
 
             const randomX = randomNumber(0, self.game.width);
             const randomGemType = Gems.RandomGem();
+            // const randomGemType = Gems.DEBUG_GEM();
             const gem = new randomGemType(self, randomX, -100);
 
             if (gem.x < gem.width / 2) {
@@ -92,7 +93,8 @@ export default class extends Phaser.State {
             }
 
             // let gem = new Gem(self, randomX, -100);
-            self.gems.add(gem, true);
+            // self.gems.add(gem, true);
+            self.gems.add(gem);
             self.dropTimer.add(Phaser.Timer.SECOND * self.timeBetweenGems, dropGem, self);
         };
         dropGem();
@@ -109,7 +111,7 @@ export default class extends Phaser.State {
 
         this.scoreboard.setText(this.score);
 
-        console.log(number, this.score);
+        // console.log(number, this.score);
     }
 
     update() {
@@ -155,7 +157,8 @@ export default class extends Phaser.State {
 
         //SHOW DEBUG INFO
         if (__DEV__) {
-            this.game.debug.text(`gems:${this.gems.length}`, 32, 32);
+            this.game.debug.text(`${this.time.fps || '--'} fps`, 32, 32);
+            this.game.debug.text(`gems:${this.gems.length}`, 32, 64);
             // this.game.debug.text(`fallSpeed:${this.fallSpeed}`, 32, 64);
             // this.game.debug.text(`timeBetweenGems:${this.timeBetweenGems}`, 32, 96);
             // this.game.debug.text(`platform X:${this.platform.x}`, 32, 128);
